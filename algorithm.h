@@ -6,7 +6,7 @@
 
 typedef struct algorithm {
 	char name[30];
-	void (*function)(int*, int, void (*)(int*,int));
+	void (*function)(int*, int, void (*)(int*,int,int));
 } algorithm_t;
 
 const algorithm_t AVAILABLE_ALGOS[] = {

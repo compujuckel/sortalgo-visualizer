@@ -1,6 +1,6 @@
 
 //partition function for quicksort
-static int partition( int a[], int l, int r, void (*update)(int*,int)) {
+static int partition( int a[], int l, int r, int length, void (*update)(int*,int,int)) {
 	int pivot, i, j, t;
 	pivot = a[l];
 	i = l; j = r+1;
@@ -10,13 +10,13 @@ static int partition( int a[], int l, int r, void (*update)(int*,int)) {
 		do{
 			++i;
 
-			update(a, i);                       //calls the print array function
+			update(a, i, length);                       //calls the print array function
 
 		} while( a[i] <= pivot && i <= r );
 		do{
 			--j;
 
-			update(a, j);                       //calls the print array function
+			update(a, j, length);                       //calls the print array function
 
 		}while( a[j] > pivot );
 
@@ -27,25 +27,25 @@ static int partition( int a[], int l, int r, void (*update)(int*,int)) {
 	}
 	t = a[l]; a[l] = a[j]; a[j] = t;
 
-	update(a, j);                           //calls the print array function
+	update(a, j, length);                           //calls the print array function
 
 	return j;
 }
 
 //actual quicksort function
-static void quicksort_internal( int a[], int l, int r, void (*update)(int*,int))
+static void quicksort_internal( int a[], int l, int r, int length, void (*update)(int*,int,int))
 {
 	int j;
 	if( l < r )
 	{
 		// divide and conquer
-		j = partition( a, l, r, update);
-		quicksort_internal( a, l, j-1, update);
-		quicksort_internal( a, j+1, r, update);
+		j = partition( a, l, r, length, update);
+		quicksort_internal( a, l, j-1, length, update);
+		quicksort_internal( a, j+1, r, length, update);
 	}
 
 }
 
-void quicksort(int* array, int length, void (*update)(int*,int)) {  
-	quicksort_internal(array, 0, length, update);	
+void quicksort(int* array, int length, void (*update)(int*,int,int)) {
+	quicksort_internal(array, 0, length, length, update);
 }

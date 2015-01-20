@@ -3,21 +3,16 @@
 #include <stdlib.h>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
 
 #include "algorithm.h"
+#include "graphics.h"
+#include "util.h"
 
 //defs
 #define WINDOW_SIZE_X 800
 #define WINDOW_SIZE_Y 600
 #define ARRAY_LENGTH 100
 #define DELAY 10         //Delay between Array accesses in ms
-float elem_height = WINDOW_SIZE_Y / ARRAY_LENGTH;
-
-//Pointer for SDL
-SDL_Window* window;
-SDL_Renderer* render;
 
 int array_master[ARRAY_LENGTH]; //Array that will be sorted and displayed
 
@@ -47,63 +42,6 @@ void initArray(){
 	shuffle(array_master, ARRAY_LENGTH);
 }
 
-//Intitializes all necessary SDL objects
-void initSDL(){
-
-	SDL_Init(SDL_INIT_EVERYTHING);
-
-	window = SDL_CreateWindow("Test", 100, 100, WINDOW_SIZE_X, WINDOW_SIZE_Y, 0); //creates a Window
-	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);            //creates Renderer
-	SDL_Surface* screen = SDL_GetWindowSurface(window);
-
-}
-
-void cleanup() {
-	SDL_DestroyRenderer(render);
-	//SDL_DestroyWindow(window); // TODO: fix segfault
-	SDL_Quit();
-}
-
-//This function displays and int array as a number of boxes with the length of its corresponding array-element
-void printArray(int *array, int selection){
-	SDL_Event event;
-	while(SDL_PollEvent(&event)) {
-		if(event.type == SDL_QUIT) {
-			cleanup();
-			exit(0);
-		}
-	}
-
-	SDL_RenderClear(render);                      //cear screen
-
-	float xPos = 0;                             //starting x-position for first box
-	float yPos = WINDOW_SIZE_Y;             //starting y position
-	int i;
-
-	float width = WINDOW_SIZE_X / ARRAY_LENGTH;  //compute width of the boxes
-
-	SDL_Rect r;
-	r.w = width - 1;                           //apply width to sdl-rectangle
-
-	for(i=0; i<=ARRAY_LENGTH; i++){
-		xPos = i*width;                                                      //x position
-		r.x = xPos;                                                       //apply x-pos
-		r.h = elem_height * array[i];                                              //apply height
-		r.y = yPos - elem_height * array[i];                                       //this is necessary because sdl computes the y positon of a rect from the top of it
-
-		if(i == selection) {
-			SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
-		} else {
-			SDL_SetRenderDrawColor(render, 127, 127, 127, 255);
-		}
-		SDL_RenderFillRect(render, &r);
-
-		SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
-	}
-
-	SDL_RenderPresent(render);                                             //Actual rendering
-	SDL_Delay(DELAY);
-}
 
 //-----------------------------------------------------------
 //--------Test Code for sorting algorithms-------------------
@@ -113,7 +51,7 @@ int main(){
 
 	srand(time(NULL));                    //init randomizer
 
-	initSDL();
+	g_init(WINDOW_SIZE_X, WINDOW_SIZE_Y, DELAY);
 	initArray();
 
 	int i;
@@ -121,9 +59,11 @@ int main(){
 		printf("Using %s algorithm\n",AVAILABLE_ALGOS[i].name);
 		// Create a copy of the master array the algorithm can work on
 		int* array_copy = malloc(sizeof(int)*ARRAY_LENGTH);
+		if(array_copy == NULL)
+			exit_with_error("malloc failed");
 		memcpy(array_copy, array_master, sizeof(int)*ARRAY_LENGTH);
 
-		AVAILABLE_ALGOS[i].function(array_copy, ARRAY_LENGTH, &printArray);
+		AVAILABLE_ALGOS[i].function(array_copy, ARRAY_LENGTH, &g_update);
 
 		free(array_copy);
 	}
@@ -135,6 +75,6 @@ int main(){
 	}
 
 	//Quit
-	cleanup();
+	g_cleanup();
 	return 0;
 }
