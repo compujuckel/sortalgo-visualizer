@@ -16,7 +16,6 @@
 
 //Pointer for SDL
 SDL_Window* window;
-SDL_Texture *normal, *selected;
 SDL_Renderer* render;
 SDL_Rect test;
 
@@ -53,17 +52,13 @@ void initSDL(){
 
 	window = SDL_CreateWindow("Test", 100, 100, WINDOW_SIZE_X, WINDOW_SIZE_Y, 0); //creates a Window
 	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);            //creates Renderer
-
-	normal = IMG_LoadTexture(render, "grey.bmp");                                 //load picture for the normal colored boxes
-	selected = IMG_LoadTexture(render, "red.bmp");                                //load picture for the red boxes (selected ones)
-
 	SDL_Surface* screen = SDL_GetWindowSurface(window);
 
 }
 
 void cleanup() {
 	SDL_DestroyRenderer(render);
-	SDL_DestroyWindow(&window);
+	//SDL_DestroyWindow(window); // TODO: fix segfault
 	SDL_Quit();
 }
 
@@ -94,8 +89,14 @@ void printArray(int *sortMe, int selection){
 		test.h = sortMe[i] * 4;                                              //apply height
 		test.y = yPos - sortMe[i] * 4;                                       //this is necessary because sdl computes the y positon of a rect from the top of it
 
-		if(i == selection) SDL_RenderCopy(render, selected, NULL, &test);    //print red box if element is selected
-		else SDL_RenderCopy(render, normal, NULL, &test);                    //else print normal box
+		if(i == selection) {
+			SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
+		} else {
+			SDL_SetRenderDrawColor(render, 127, 127, 127, 255);
+		}
+		SDL_RenderFillRect(render, &test);
+
+		SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
 	}
 
 	SDL_RenderPresent(render);                                             //Actual rendering
@@ -125,7 +126,11 @@ int main(){
 	AVAILABLE_ALGOS[1].function(sortMe, ARRAY_LENGTH, &printArray);
 	printArray(sortMe,0);
 
-	SDL_Delay(10000);                    //wait
+	SDL_Event ev;
+	while(SDL_WaitEvent(&ev)) {
+		if(ev.type == SDL_QUIT)
+			break;
+	}
 
 	//Quit
 	cleanup();
