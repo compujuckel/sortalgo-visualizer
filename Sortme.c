@@ -19,15 +19,8 @@ float elem_height = WINDOW_SIZE_Y / ARRAY_LENGTH;
 SDL_Window* window;
 SDL_Renderer* render;
 
-int sortMe[ARRAY_LENGTH]; //Array that will be sorted and displayed
+int array_master[ARRAY_LENGTH]; //Array that will be sorted and displayed
 
-//intialize Array with number from 0 to ARRAY_LENGTH
-void initArray(){
-	int i;
-	for(i=0; i<=ARRAY_LENGTH; i++){
-		sortMe[i] = i;
-	}
-}
 
 //Randomizes Array entries
 void shuffle(int *array, size_t n){
@@ -43,6 +36,15 @@ void shuffle(int *array, size_t n){
 
 		}
 	}
+}
+
+//intialize Array with number from 0 to ARRAY_LENGTH and randomize it
+void initArray(){
+	int i;
+	for(i=0; i<=ARRAY_LENGTH; i++){
+		array_master[i] = i;
+	}
+	shuffle(array_master, ARRAY_LENGTH);
 }
 
 //Intitializes all necessary SDL objects
@@ -63,7 +65,7 @@ void cleanup() {
 }
 
 //This function displays and int array as a number of boxes with the length of its corresponding array-element
-void printArray(int *sortMe, int selection){
+void printArray(int *array, int selection){
 	SDL_Event event;
 	while(SDL_PollEvent(&event)) {
 		if(event.type == SDL_QUIT) {
@@ -86,8 +88,8 @@ void printArray(int *sortMe, int selection){
 	for(i=0; i<=ARRAY_LENGTH; i++){
 		xPos = i*width;                                                      //x position
 		r.x = xPos;                                                       //apply x-pos
-		r.h = elem_height * sortMe[i];                                              //apply height
-		r.y = yPos - elem_height * sortMe[i];                                       //this is necessary because sdl computes the y positon of a rect from the top of it
+		r.h = elem_height * array[i];                                              //apply height
+		r.y = yPos - elem_height * array[i];                                       //this is necessary because sdl computes the y positon of a rect from the top of it
 
 		if(i == selection) {
 			SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
@@ -117,11 +119,14 @@ int main(){
 	int i;
 	for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++) {
 		printf("Using %s algorithm\n",AVAILABLE_ALGOS[i].name);
-		shuffle(sortMe,ARRAY_LENGTH);
-		AVAILABLE_ALGOS[i].function(sortMe, ARRAY_LENGTH, &printArray);
-	}
+		// Create a copy of the master array the algorithm can work on
+		int* array_copy = malloc(sizeof(int)*ARRAY_LENGTH);
+		memcpy(array_copy, array_master, sizeof(int)*ARRAY_LENGTH);
 
-	printArray(sortMe, 0);
+		AVAILABLE_ALGOS[i].function(array_copy, ARRAY_LENGTH, &printArray);
+
+		free(array_copy);
+	}
 
 	SDL_Event ev;
 	while(SDL_WaitEvent(&ev)) {
