@@ -1,5 +1,5 @@
 TARGET = sortMe
-LIBS = -lSDL2 -lSDL2_image
+LIBS = -lSDL2 -lSDL2_ttf
 CC = gcc
 CFLAGS = -g -Wall
 

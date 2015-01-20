@@ -1,12 +1,13 @@
 #include "graphics.h"
+#include "util.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
 
 //Pointer for SDL
-static SDL_Window* window;
-static SDL_Renderer* render;
+static SDL_Window* window = NULL;
+static SDL_Renderer* render = NULL;
+static TTF_Font* font = NULL;
 
 static int delay;
 
@@ -17,12 +18,47 @@ void g_init(int wsize_x, int wsize_y, int d) {
 	window = SDL_CreateWindow("Test", 100, 100, wsize_x, wsize_y, 0); //creates a Window
 	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);            //creates Renderer
 	delay = d;
+
+	TTF_Init();
+	font = TTF_OpenFont("OpenSans-Regular.ttf", 14);
+	if(font == NULL)
+		exit_with_error("could not open font");
 }
 
 void g_cleanup(void) {
+	TTF_CloseFont(font);
+	TTF_Quit();
 	SDL_DestroyRenderer(render);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+
+static void g_renderTexture(SDL_Texture* tex, int x, int y) {
+	SDL_Rect dst;
+	dst.x = x;
+	dst.y = y;
+	SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
+
+	SDL_RenderCopy(render, tex, NULL, &dst);
+}
+
+static void g_print(int x, int y, char* text)  {
+	SDL_Color white = {255, 255, 255};
+	SDL_Surface* f = TTF_RenderText_Blended(font, text, white);
+	SDL_Texture* t = SDL_CreateTextureFromSurface(render, f);
+
+	SDL_FreeSurface(f);
+	g_renderTexture(t, x, y);
+	SDL_DestroyTexture(t);
+}
+
+static void g_printf(int x, int y, const char* format, ...) {
+	char buffer[200];
+	va_list args;
+	va_start(args, format);
+	vsnprintf(buffer, 200, format, args);
+	g_print(x, y, buffer);
+	va_end(args);
 }
 
 //This function displays and int array as a number of boxes with the length of its corresponding array-element
@@ -37,6 +73,7 @@ void g_update(int *array, int selection, int length) {
 
 	SDL_RenderClear(render);                      //cear screen
 
+	//g_printf(10, 10, "Hello %d",10);
 	int wsize_x, wsize_y;
 	SDL_GetWindowSize(window, &wsize_x, &wsize_y);
 	float elem_height = wsize_y / length;
