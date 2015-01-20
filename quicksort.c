@@ -5,14 +5,14 @@ static int partition( int a[], int l, int r, int length, void (*update)(int*,int
 	pivot = a[l];
 	i = l; j = r+1;
 
-	while( 1)
+	while(1)
 	{
 		do{
 			++i;
 
 			update(a, i, length);                       //calls the print array function
 
-		} while( a[i] <= pivot && i <= r );
+		} while( i <= r && a[i] <= pivot);
 		do{
 			--j;
 
@@ -47,5 +47,5 @@ static void quicksort_internal( int a[], int l, int r, int length, void (*update
 }
 
 void quicksort(int* array, int length, void (*update)(int*,int,int)) {
-	quicksort_internal(array, 0, length, length, update);
+	quicksort_internal(array, 0, length-1, length, update);
 }
