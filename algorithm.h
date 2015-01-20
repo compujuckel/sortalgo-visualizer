@@ -11,7 +11,8 @@ typedef struct algorithm {
 
 const algorithm_t AVAILABLE_ALGOS[] = {
 	{ "Bubble Sort", &bubblesort },
-	{ "Quicksort", &quicksort }
+	{ "Quicksort", &quicksort },
+	{ "", NULL }
 };
 
 #endif

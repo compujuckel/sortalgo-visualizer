@@ -114,17 +114,14 @@ int main(){
 	initSDL();
 	initArray();
 
-	shuffle(sortMe,ARRAY_LENGTH);         //shuffle the array
+	int i;
+	for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++) {
+		printf("Using %s algorithm\n",AVAILABLE_ALGOS[i].name);
+		shuffle(sortMe,ARRAY_LENGTH);
+		AVAILABLE_ALGOS[i].function(sortMe, ARRAY_LENGTH, &printArray);
+	}
 
-	AVAILABLE_ALGOS[0].function(sortMe, ARRAY_LENGTH, &printArray);
-
-	//bubbleSort();                         //show bubblesort
-
-	shuffle(sortMe,ARRAY_LENGTH);         //shuffle again
-
-	//quickSort(sortMe, 0, ARRAY_LENGTH);   //show quicksort
-	AVAILABLE_ALGOS[1].function(sortMe, ARRAY_LENGTH, &printArray);
-	printArray(sortMe,0);
+	printArray(sortMe, 0);
 
 	SDL_Event ev;
 	while(SDL_WaitEvent(&ev)) {
