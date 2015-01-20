@@ -8,6 +8,7 @@
 #include "graphics.h"
 #include "array.h"
 #include "util.h"
+#include "timer.h"
 
 //defs
 #define WINDOW_SIZE_X 800
@@ -28,8 +29,12 @@ int main(){
 
 		int* copy = a_get_copy();
 		
+		timer_start();
 		AVAILABLE_ALGOS[i].function(copy, ARRAY_LENGTH, &g_update);
+		timeinfo_t* t = timer_stop();
 
+		printf("Clocks: %ju, %f seconds\n",t->clocks,t->seconds);
+		free(t);
 		free(copy);
 	}
 
