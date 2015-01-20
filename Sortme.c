@@ -13,11 +13,11 @@
 #define WINDOW_SIZE_Y 600
 #define ARRAY_LENGTH 100
 #define DELAY 10         //Delay between Array accesses in ms
+float elem_height = WINDOW_SIZE_Y / ARRAY_LENGTH;
 
 //Pointer for SDL
 SDL_Window* window;
 SDL_Renderer* render;
-SDL_Rect test;
 
 int sortMe[ARRAY_LENGTH]; //Array that will be sorted and displayed
 
@@ -69,32 +69,32 @@ void printArray(int *sortMe, int selection){
 		if(event.type == SDL_QUIT) {
 			cleanup();
 			exit(0);
-			return;
 		}
 	}
 
 	SDL_RenderClear(render);                      //cear screen
 
-	float xPos = 10;                             //starting x-position for first box
-	float yPos = WINDOW_SIZE_Y - 10;             //starting y position
+	float xPos = 0;                             //starting x-position for first box
+	float yPos = WINDOW_SIZE_Y;             //starting y position
 	int i;
 
 	float width = WINDOW_SIZE_X / ARRAY_LENGTH;  //compute width of the boxes
-	test.w = width - 1;                           //apply width to sdl-rectangle
 
-	//this iterates through the array and applys an x-coordinate and a height(equal to the array value * 4) to each rectangle and copies it on the screen
+	SDL_Rect r;
+	r.w = width - 1;                           //apply width to sdl-rectangle
+
 	for(i=0; i<=ARRAY_LENGTH; i++){
 		xPos = i*width;                                                      //x position
-		test.x = xPos;                                                       //apply x-pos
-		test.h = sortMe[i] * 4;                                              //apply height
-		test.y = yPos - sortMe[i] * 4;                                       //this is necessary because sdl computes the y positon of a rect from the top of it
+		r.x = xPos;                                                       //apply x-pos
+		r.h = elem_height * sortMe[i];                                              //apply height
+		r.y = yPos - elem_height * sortMe[i];                                       //this is necessary because sdl computes the y positon of a rect from the top of it
 
 		if(i == selection) {
 			SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
 		} else {
 			SDL_SetRenderDrawColor(render, 127, 127, 127, 255);
 		}
-		SDL_RenderFillRect(render, &test);
+		SDL_RenderFillRect(render, &r);
 
 		SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
 	}
