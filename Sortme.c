@@ -27,14 +27,13 @@ int main(){
 	for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++) {
 		printf("Using %s algorithm\n",AVAILABLE_ALGOS[i].name);
 
-		int* copy = a_get_copy();
+		array_t* copy = a_get_copy();
 		
 		timer_start();
-		AVAILABLE_ALGOS[i].function(copy, ARRAY_LENGTH, &g_update);
-		timeinfo_t* t = timer_stop();
+		AVAILABLE_ALGOS[i].function(copy, &g_update);
 
-		printf("Clocks: %ju, %f seconds\n",t->clocks,t->seconds);
-		free(t);
+		printf("Time: %f seconds\n",timer_status());
+		free(copy->ptr);
 		free(copy);
 	}
 

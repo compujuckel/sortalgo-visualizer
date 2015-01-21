@@ -1,18 +1,19 @@
 #include "bubblesort.h"
+#include "array.h"
 
-void bubblesort(int* array, int length, void (*update)(int*,int,int)) {
+void bubblesort(array_t* a, void (*update)(array_t*,int)) {
     int x;
     int y;
-    for(x=0; x < length; x++)
+    for(x=0; x < a->length; x++)
     {
-        for(y=0; y < length-1; y++)
+        for(y=0; y < a->length-1; y++)
         {
-            if(array[y] > array[y+1])
+            if(a->ptr[y] > a->ptr[y+1])
             {
-                int temp = array[y+1];
-                array[y+1] = array[y];
-                array[y] = temp;
-                update(array, y+1, length);   //calls the print array function after every iteration of the algorithm
+                int temp = a->ptr[y+1];
+                a->ptr[y+1] = a->ptr[y];
+                a->ptr[y] = temp;
+                update(a, y+1);   //calls the print array function after every iteration of the algorithm
              }
          }
     }

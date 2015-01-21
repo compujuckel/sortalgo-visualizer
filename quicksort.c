@@ -1,8 +1,9 @@
+#include "array.h"
 
 //partition function for quicksort
-static int partition( int a[], int l, int r, int length, void (*update)(int*,int,int)) {
+static int partition(array_t* a,  int l, int r, void (*update)(array_t*,int)) {
 	int pivot, i, j, t;
-	pivot = a[l];
+	pivot = a->ptr[l];
 	i = l; j = r+1;
 
 	while(1)
@@ -10,42 +11,42 @@ static int partition( int a[], int l, int r, int length, void (*update)(int*,int
 		do{
 			++i;
 
-			update(a, i, length);                       //calls the print array function
+			update(a, i);                       //calls the print array function
 
-		} while( i <= r && a[i] <= pivot);
+		} while( i <= r && a->ptr[i] <= pivot);
 		do{
 			--j;
 
-			update(a, j, length);                       //calls the print array function
+			update(a, j);                       //calls the print array function
 
-		}while( a[j] > pivot );
+		}while( a->ptr[j] > pivot );
 
 		if( i >= j ) break;
 
-		t = a[i]; a[i] = a[j]; a[j] = t;
+		t = a->ptr[i]; a->ptr[i] = a->ptr[j]; a->ptr[j] = t;
 
 	}
-	t = a[l]; a[l] = a[j]; a[j] = t;
+	t = a->ptr[l]; a->ptr[l] = a->ptr[j]; a->ptr[j] = t;
 
-	update(a, j, length);                           //calls the print array function
+	update(a, j);                           //calls the print array function
 
 	return j;
 }
 
 //actual quicksort function
-static void quicksort_internal( int a[], int l, int r, int length, void (*update)(int*,int,int))
+static void quicksort_internal(array_t* a, int l, int r, void (*update)(array_t*,int))
 {
 	int j;
 	if( l < r )
 	{
 		// divide and conquer
-		j = partition( a, l, r, length, update);
-		quicksort_internal( a, l, j-1, length, update);
-		quicksort_internal( a, j+1, r, length, update);
+		j = partition( a, l, r, update);
+		quicksort_internal( a, l, j-1, update);
+		quicksort_internal( a, j+1, r, update);
 	}
 
 }
 
-void quicksort(int* array, int length, void (*update)(int*,int,int)) {
-	quicksort_internal(array, 0, length-1, length, update);
+void quicksort(array_t* a, void (*update)(array_t*,int)) {
+	quicksort_internal(a, 0, a->length-1, update);
 }

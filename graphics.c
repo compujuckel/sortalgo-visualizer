@@ -1,5 +1,7 @@
 #include "graphics.h"
+#include "timer.h"
 #include "util.h"
+#include "array.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -62,7 +64,7 @@ static void g_printf(int x, int y, const char* format, ...) {
 }
 
 //This function displays and int array as a number of boxes with the length of its corresponding array-element
-void g_update(int *array, int selection, int length) {
+void g_update(array_t* a, int selection) {
 	SDL_Event event;
 	while(SDL_PollEvent(&event)) {
 		if(event.type == SDL_QUIT) {
@@ -76,22 +78,22 @@ void g_update(int *array, int selection, int length) {
 	//g_printf(10, 10, "Hello %d",10);
 	int wsize_x, wsize_y;
 	SDL_GetWindowSize(window, &wsize_x, &wsize_y);
-	float elem_height = wsize_y / length;
+	float elem_height = wsize_y / a->length;
 
 	float xPos = 0;                             //starting x-position for first box
 	float yPos = wsize_y;             //starting y position
 
-	float width = wsize_x / length;  //compute width of the boxes
+	float width = wsize_x / a->length;  //compute width of the boxes
 
 	SDL_Rect r;
 	r.w = width - 1;                           //apply width to sdl-rectangle
 
 	int i;
-	for(i = 0; i < length; i++){
+	for(i = 0; i < a->length; i++){
 		xPos = i * width;                                                      //x position
 		r.x = xPos;                                                       //apply x-pos
-		r.h = elem_height * array[i];                                              //apply height
-		r.y = yPos - elem_height * array[i];                                       //this is necessary because sdl computes the y positon of a rect from the top of it
+		r.h = elem_height * a->ptr[i];                                              //apply height
+		r.y = yPos - elem_height * a->ptr[i];                                       //this is necessary because sdl computes the y positon of a rect from the top of it
 
 		if(i == selection) {
 			SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
@@ -102,6 +104,9 @@ void g_update(int *array, int selection, int length) {
 
 		SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
 	}
+	
+	g_printf(10, 10, "Elapsed time: %f",timer_status());
+	g_printf(10, 30, "Updates: %d",++a->acount);
 
 	SDL_RenderPresent(render);                                             //Actual rendering
 	SDL_Delay(delay);
