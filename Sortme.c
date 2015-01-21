@@ -14,34 +14,56 @@
 #define WINDOW_SIZE_X 800
 #define WINDOW_SIZE_Y 600
 #define ARRAY_LENGTH 100
-#define DELAY 10         //Delay between Array accesses in ms
+#define DELAY 5         //Delay between Array accesses in ms
 
 int main(){
+	SDL_Event e;
+	int quit = 0;
+	int i;
+	int algo;
+	int pos[10][2];  //gets x and y positions of buttons for algorithms
+	int size[10][2]; //gets x and y size of buttons for algorithms
 
 	srand(time(NULL));                    //init randomizer
 
 	g_init(WINDOW_SIZE_X, WINDOW_SIZE_Y, DELAY);
 	a_init(ARRAY_LENGTH);
 
-	int i;
-	for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++) {
-		printf("Using %s algorithm\n",AVAILABLE_ALGOS[i].name);
+	//main loop
+	while(!quit){
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) {
+				g_cleanup();
+				quit = 1;
+		  }
+			else if (e.type == SDL_MOUSEBUTTONDOWN) {
+				if (e.button.button == SDL_BUTTON_LEFT) {
+					for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++)
+						{
+							if(e.button.x > pos[i][0] && e.button.x < pos[i][0] + size[i][0] &&
+								 e.button.y > pos[i][1] && e.button.y < pos[i][1] + size[i][1])
+							{
+							algo = i;
 
-		array_t* copy = a_get_copy();
-		
-		timer_start();
-		AVAILABLE_ALGOS[i].function(copy, &g_update);
+							printf("Using %s algorithm\n",AVAILABLE_ALGOS[algo].name);
 
-		printf("Time: %f seconds\n",timer_status());
-		free(copy->ptr);
-		free(copy);
-	}
+							array_t* copy = a_get_copy();
 
-	SDL_Event ev;
-	while(SDL_WaitEvent(&ev)) {
-		if(ev.type == SDL_QUIT)
-			break;
-	}
+							timer_start();
+							AVAILABLE_ALGOS[algo].function(copy, &g_update);
+
+							printf("Time: %f seconds\n",timer_status());
+							free(copy->ptr);
+							free(copy);
+							break;
+						  }
+						}
+
+					}
+				}
+				else g_menu(&pos, &size);
+				}
+			}
 
 	//Quit
 	g_cleanup();

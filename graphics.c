@@ -1,7 +1,11 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "graphics.h"
 #include "timer.h"
 #include "util.h"
 #include "array.h"
+#include "algorithm.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -9,7 +13,7 @@
 //Pointer for SDL
 static SDL_Window* window = NULL;
 static SDL_Renderer* render = NULL;
-static TTF_Font* font = NULL;
+static TTF_Font* font14, *font40 = NULL;
 
 static int delay;
 
@@ -17,40 +21,55 @@ static int delay;
 void g_init(int wsize_x, int wsize_y, int d) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	window = SDL_CreateWindow("Test", 100, 100, wsize_x, wsize_y, 0); //creates a Window
+	window = SDL_CreateWindow("Test", 100, 100, wsize_x, wsize_y, 0);             //creates a Window
 	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);            //creates Renderer
 	delay = d;
 
 	TTF_Init();
-	font = TTF_OpenFont("OpenSans-Regular.ttf", 14);
-	if(font == NULL)
+	font14 = TTF_OpenFont("OpenSans-Regular.ttf", 14);
+	if(font14 == NULL)
+		exit_with_error("could not open font");
+	font40 = TTF_OpenFont("OpenSans-Regular.ttf", 40);
+	if(font40 == NULL)
 		exit_with_error("could not open font");
 }
 
 void g_cleanup(void) {
-	TTF_CloseFont(font);
+	TTF_CloseFont(font14);
+	TTF_CloseFont(font40);
 	TTF_Quit();
 	SDL_DestroyRenderer(render);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
 
-static void g_renderTexture(SDL_Texture* tex, int x, int y) {
+static void g_getTexSize(char* text, TTF_Font *font, int size[2]) {
+	SDL_Color white = {255, 255, 255};
+	SDL_Surface* f = TTF_RenderText_Blended(font, text, white);
+	SDL_Texture* t = SDL_CreateTextureFromSurface(render, f);
+	SDL_QueryTexture(t, NULL, NULL, &size[0], &size[1]);
+}
+
+static void g_renderTexture(SDL_Texture* tex, int x, int y, int fill) {
 	SDL_Rect dst;
 	dst.x = x;
 	dst.y = y;
 	SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
-
+	if(fill){
+		SDL_SetRenderDrawColor(render, 127, 127, 127, 255);
+		SDL_RenderFillRect(render, &dst);
+		SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
+	}
 	SDL_RenderCopy(render, tex, NULL, &dst);
 }
 
-static void g_print(int x, int y, char* text)  {
+static void g_print(int x, int y, char* text, TTF_Font *font, int fill)  {
 	SDL_Color white = {255, 255, 255};
 	SDL_Surface* f = TTF_RenderText_Blended(font, text, white);
 	SDL_Texture* t = SDL_CreateTextureFromSurface(render, f);
 
 	SDL_FreeSurface(f);
-	g_renderTexture(t, x, y);
+  g_renderTexture(t, x, y, fill);
 	SDL_DestroyTexture(t);
 }
 
@@ -59,8 +78,27 @@ static void g_printf(int x, int y, const char* format, ...) {
 	va_list args;
 	va_start(args, format);
 	vsnprintf(buffer, 200, format, args);
-	g_print(x, y, buffer);
+	g_print(x, y, buffer, font14, 0);
 	va_end(args);
+}
+
+void g_menu(int pos[10][2], int size[10][2]){
+	SDL_RenderClear(render);
+
+	int wsize_x, wsize_y;
+	SDL_GetWindowSize(window, &wsize_x, &wsize_y);
+
+	int tmpSize[2];
+	int i;
+	for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++) {
+		g_getTexSize(AVAILABLE_ALGOS[i].name, font40, tmpSize);
+		size[i][0] = tmpSize[0];
+		size[i][1] = tmpSize[1];
+		pos[i][0] = wsize_x /2 - size[i][0] / 2;
+		pos[i][1] = wsize_y/10  + size[i][1] / 2 + i*(size[i][1]+5);
+		g_print(pos[i][0], pos[i][1], AVAILABLE_ALGOS[i].name, font40, 1);
+	}
+	SDL_RenderPresent(render);
 }
 
 //This function displays and int array as a number of boxes with the length of its corresponding array-element
@@ -75,7 +113,6 @@ void g_update(array_t* a, int selection) {
 
 	SDL_RenderClear(render);                      //cear screen
 
-	//g_printf(10, 10, "Hello %d",10);
 	int wsize_x, wsize_y;
 	SDL_GetWindowSize(window, &wsize_x, &wsize_y);
 	float elem_height = wsize_y / a->length;
@@ -104,7 +141,6 @@ void g_update(array_t* a, int selection) {
 
 		SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
 	}
-	
 	g_printf(10, 10, "Elapsed time: %f",timer_status());
 	g_printf(10, 30, "Updates: %d",++a->acount);
 

@@ -1,6 +1,8 @@
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "array.h"
 
 #include "bubblesort.h"
@@ -13,12 +15,6 @@ typedef struct algorithm {
 	void (*function)(array_t*, void (*)(array_t*,int));
 } algorithm_t;
 
-const algorithm_t AVAILABLE_ALGOS[] = {
-	{ "Bubble Sort", &bubblesort },
-	{ "Quicksort", &quicksort },
-	{ "Insertionsort", &insertion },
-    { "Selectionsort", &selectionsort },
-	{ "", NULL }
-};
+extern const algorithm_t AVAILABLE_ALGOS[];
 
 #endif
