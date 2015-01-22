@@ -81,12 +81,12 @@ static void g_print(int x, int y, char* text, TTF_Font *font, int fill)  {
 	SDL_DestroyTexture(t);
 }
 
-static void g_printf(int x, int y, const char* format, ...) {
+static void g_printf(int x, int y, TTF_Font *font, int fill, const char* format, ...) {
 	char buffer[200];
 	va_list args;
 	va_start(args, format);
 	vsnprintf(buffer, 200, format, args);
-	g_print(x, y, buffer, font14, 0);
+	g_print(x, y, buffer, font, fill);
 	va_end(args);
 }
 
@@ -98,6 +98,7 @@ void g_menu(int pos[10][2], int size[10][2]){
 
 	int tmpSize[2];
 	int i;
+	//Algo buttons
 	for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++) {
 		if(i == 0) g_print(wsize_x/2 - 100, 10, "Algorithms:", font40, 0);
 		g_getTexSize(AVAILABLE_ALGOS[i].name, font40, tmpSize);
@@ -107,19 +108,13 @@ void g_menu(int pos[10][2], int size[10][2]){
 		pos[i][1] = wsize_y/10  + size[i][1] / 2 + i*(size[i][1]+5);
 		g_print(pos[i][0], pos[i][1], AVAILABLE_ALGOS[i].name, font40, 1);
 	}
+	//Delay buttons
 	g_print(10, 10, "Delay:", font40, 0);
-	if(delay == 5  ) g_print(10, 80, "05 ms", font40, 2);
-	else             g_print(10, 80, "05 ms", font40, 1);
-	if(delay == 10 ) g_print(10, 140, "10 ms", font40, 2);
-	else             g_print(10, 140, "10 ms", font40, 1);
-	if(delay == 15 ) g_print(10, 200, "15 ms", font40, 2);
-	else             g_print(10, 200, "15 ms", font40, 1);
-	if(delay == 20 ) g_print(10, 260, "20 ms", font40, 2);
- 	else             g_print(10, 260, "20 ms", font40, 1);
-	if(delay == 25 ) g_print(10, 320, "25 ms", font40, 2);
-	else             g_print(10, 320, "25 ms", font40, 1);
-	if(delay == 30 ) g_print(10, 380, "30 ms", font40, 2);
-	else             g_print(10, 380, "30 ms", font40, 1);
+	for(i = 0; i < 7; i++){
+		if(i*5 == delay) g_printf(10, 80 + i*60, font40, 2, "%d ms", i*5);
+		else g_printf(10, 80 + i*60, font40, 1, "%d ms", i*5);
+	}
+
 	SDL_RenderPresent(render);
 }
 
@@ -163,8 +158,8 @@ void g_update(array_t* a, int selection) {
 
 		SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
 	}
-	g_printf(10, 10, "Elapsed time: %f",timer_status());
-	g_printf(10, 30, "Updates: %d",++a->acount);
+	g_printf(10, 10, font14, 0, "Elapsed time: %f",timer_status());
+	g_printf(10, 30, font14, 0, "Updates: %d",++a->acount);
 
 	SDL_RenderPresent(render);                                             //Actual rendering
 	SDL_Delay(delay);

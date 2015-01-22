@@ -35,14 +35,14 @@ int main(){
 				g_cleanup();
 				quit = 1;
 		  }
-			else if (e.type == SDL_MOUSEBUTTONDOWN) {
+			if (e.type == SDL_MOUSEBUTTONDOWN) {
 				if (e.button.button == SDL_BUTTON_LEFT) {
-					for(i = 0; i < 6; i++){
+					for(i = 0; i < 7; i++){
 						if(e.button.x > 10 && e.button.x < 120 &&
 							 e.button.y > 80 + 60*i && e.button.y < 135 + 60*i)
 							{
-								printf("Delay set to %d ms \n", (i+1)*5);
-								g_updateDelay((i+1)*5);
+								printf("Delay set to %d ms \n", i*5);
+								g_updateDelay(i*5);
 							}
 					}
 					for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++)
