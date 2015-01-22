@@ -16,6 +16,7 @@ static SDL_Renderer* render = NULL;
 static TTF_Font* font14, *font40 = NULL;
 
 static int delay = 10;                     //delay between updates in ms
+static int array_length = 100;
 
 //Intitializes all necessary SDL objects
 void g_init(int wsize_x, int wsize_y) {
@@ -45,6 +46,15 @@ void g_cleanup(void) {
 void g_updateDelay(int d){
 	delay = d;
 }
+
+int g_getArrayLength(){
+	return array_length;
+}
+
+void g_setArrayLength(int l){
+	array_length =l;
+}
+
 
 static void g_getTexSize(char* text, TTF_Font *font, int size[2]) {
 	SDL_Color white = {255, 255, 255};
@@ -113,6 +123,12 @@ void g_menu(int pos[10][2], int size[10][2]){
 	for(i = 0; i < 7; i++){
 		if(i*5 == delay) g_printf(10, 80 + i*60, font40, 2, "%d ms", i*5);
 		else g_printf(10, 80 + i*60, font40, 1, "%d ms", i*5);
+	}
+	//Array size buttons
+	g_print(wsize_x - 200, 10, "Array size:", font40, 0);
+	for(i = 0; i < 4; i++){
+		if((i+1)*50 == array_length) g_printf(wsize_x - 80, 80 + i*60, font40, 2, "%d", (i+1)*50);
+		else g_printf(wsize_x - 80, 80 + i*60, font40, 1, "%d", (i+1)*50);
 	}
 
 	SDL_RenderPresent(render);
