@@ -14,7 +14,6 @@
 #define WINDOW_SIZE_X 800
 #define WINDOW_SIZE_Y 600
 #define ARRAY_LENGTH 100
-#define DELAY 5         //Delay between Array accesses in ms
 
 int main(){
 	SDL_Event e;
@@ -26,7 +25,7 @@ int main(){
 
 	srand(time(NULL));                    //init randomizer
 
-	g_init(WINDOW_SIZE_X, WINDOW_SIZE_Y, DELAY);
+	g_init(WINDOW_SIZE_X, WINDOW_SIZE_Y);
 	a_init(ARRAY_LENGTH);
 
 	//main loop
@@ -38,6 +37,14 @@ int main(){
 		  }
 			else if (e.type == SDL_MOUSEBUTTONDOWN) {
 				if (e.button.button == SDL_BUTTON_LEFT) {
+					for(i = 0; i < 6; i++){
+						if(e.button.x > 10 && e.button.x < 120 &&
+							 e.button.y > 80 + 60*i && e.button.y < 135 + 60*i)
+							{
+								printf("Delay set to %d ms \n", (i+1)*5);
+								g_updateDelay((i+1)*5);
+							}
+					}
 					for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++)
 						{
 							if(e.button.x > pos[i][0] && e.button.x < pos[i][0] + size[i][0] &&

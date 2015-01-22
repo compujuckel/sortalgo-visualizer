@@ -15,15 +15,14 @@ static SDL_Window* window = NULL;
 static SDL_Renderer* render = NULL;
 static TTF_Font* font14, *font40 = NULL;
 
-static int delay;
+static int delay = 10;                     //delay between updates in ms
 
 //Intitializes all necessary SDL objects
-void g_init(int wsize_x, int wsize_y, int d) {
+void g_init(int wsize_x, int wsize_y) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	window = SDL_CreateWindow("Test", 100, 100, wsize_x, wsize_y, 0);             //creates a Window
+	window = SDL_CreateWindow("Sortme", 100, 100, wsize_x, wsize_y, 0);             //creates a Window
 	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);            //creates Renderer
-	delay = d;
 
 	TTF_Init();
 	font14 = TTF_OpenFont("OpenSans-Regular.ttf", 14);
@@ -43,6 +42,10 @@ void g_cleanup(void) {
 	SDL_Quit();
 }
 
+void g_updateDelay(int d){
+	delay = d;
+}
+
 static void g_getTexSize(char* text, TTF_Font *font, int size[2]) {
 	SDL_Color white = {255, 255, 255};
 	SDL_Surface* f = TTF_RenderText_Blended(font, text, white);
@@ -57,6 +60,11 @@ static void g_renderTexture(SDL_Texture* tex, int x, int y, int fill) {
 	SDL_QueryTexture(tex, NULL, NULL, &dst.w, &dst.h);
 	if(fill){
 		SDL_SetRenderDrawColor(render, 127, 127, 127, 255);
+		SDL_RenderFillRect(render, &dst);
+		SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
+	}
+	if(fill == 2){
+		SDL_SetRenderDrawColor(render, 127, 0, 0, 255);
 		SDL_RenderFillRect(render, &dst);
 		SDL_SetRenderDrawColor(render, 0, 0, 0, 255);
 	}
@@ -91,6 +99,7 @@ void g_menu(int pos[10][2], int size[10][2]){
 	int tmpSize[2];
 	int i;
 	for(i = 0; AVAILABLE_ALGOS[i].function != NULL; i++) {
+		if(i == 0) g_print(wsize_x/2 - 100, 10, "Algorithms:", font40, 0);
 		g_getTexSize(AVAILABLE_ALGOS[i].name, font40, tmpSize);
 		size[i][0] = tmpSize[0];
 		size[i][1] = tmpSize[1];
@@ -98,6 +107,19 @@ void g_menu(int pos[10][2], int size[10][2]){
 		pos[i][1] = wsize_y/10  + size[i][1] / 2 + i*(size[i][1]+5);
 		g_print(pos[i][0], pos[i][1], AVAILABLE_ALGOS[i].name, font40, 1);
 	}
+	g_print(10, 10, "Delay:", font40, 0);
+	if(delay == 5  ) g_print(10, 80, "05 ms", font40, 2);
+	else             g_print(10, 80, "05 ms", font40, 1);
+	if(delay == 10 ) g_print(10, 140, "10 ms", font40, 2);
+	else             g_print(10, 140, "10 ms", font40, 1);
+	if(delay == 15 ) g_print(10, 200, "15 ms", font40, 2);
+	else             g_print(10, 200, "15 ms", font40, 1);
+	if(delay == 20 ) g_print(10, 260, "20 ms", font40, 2);
+ 	else             g_print(10, 260, "20 ms", font40, 1);
+	if(delay == 25 ) g_print(10, 320, "25 ms", font40, 2);
+	else             g_print(10, 320, "25 ms", font40, 1);
+	if(delay == 30 ) g_print(10, 380, "30 ms", font40, 2);
+	else             g_print(10, 380, "30 ms", font40, 1);
 	SDL_RenderPresent(render);
 }
 
