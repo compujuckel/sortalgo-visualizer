@@ -9,6 +9,6 @@ void g_updateDelay(int d);
 int g_getArrayLength(void);
 void g_setArrayLength(int l);
 void g_menu();
-void g_update(array_t* a, int selection);
+int g_update(array_t* a, int selection);
 
 #endif

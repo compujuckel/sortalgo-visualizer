@@ -1,7 +1,7 @@
 #include "insertionsort.h"
 #include "array.h"
 
-void insertion(array_t* arr, void (*update)(array_t*,int))
+void insertion(array_t* arr, int (*update)(array_t*,int))
 {
  int i,j,tmp;
  for(i=0; i<arr->length; i++)
@@ -13,7 +13,7 @@ void insertion(array_t* arr, void (*update)(array_t*,int))
       tmp=arr->ptr[j];
       arr->ptr[j]=arr->ptr[j+1];
       arr->ptr[j+1]=tmp;
-      update(arr, j);
+      if(update(arr, j)) return;
     }
     else
       break;

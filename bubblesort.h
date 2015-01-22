@@ -3,6 +3,6 @@
 
 #include "array.h"
 
-void bubblesort(array_t* a, void (*update)(array_t*,int));
+void bubblesort(array_t* a, int (*update)(array_t*,int));
 
 #endif

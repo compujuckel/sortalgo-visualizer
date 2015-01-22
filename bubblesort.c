@@ -1,7 +1,12 @@
 #include "bubblesort.h"
 #include "array.h"
+#include "graphics.h"
 
-void bubblesort(array_t* a, void (*update)(array_t*,int)) {
+#include <SDL2/SDL.h>
+
+SDL_Event e;
+
+void bubblesort(array_t* a, int (*update)(array_t*,int)) {
     int x;
     int y;
     for(x=0; x < a->length; x++)
@@ -13,7 +18,7 @@ void bubblesort(array_t* a, void (*update)(array_t*,int)) {
                 int temp = a->ptr[y+1];
                 a->ptr[y+1] = a->ptr[y];
                 a->ptr[y] = temp;
-                update(a, y+1);   //calls the print array function after every iteration of the algorithm
+                if( update(a, y+1) ) return;   //calls the print array function after every iteration of the algorithm
              }
          }
     }

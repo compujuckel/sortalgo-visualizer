@@ -135,12 +135,15 @@ void g_menu(int pos[10][2], int size[10][2]){
 }
 
 //This function displays and int array as a number of boxes with the length of its corresponding array-element
-void g_update(array_t* a, int selection) {
-	SDL_Event event;
-	while(SDL_PollEvent(&event)) {
-		if(event.type == SDL_QUIT) {
+int g_update(array_t* a, int selection) {
+	SDL_Event e;
+	while (SDL_PollEvent(&e)) {
+		if(e.type == SDL_QUIT) {
 			g_cleanup();
 			exit(EXIT_SUCCESS);
+		}
+		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) {
+			return 1;
 		}
 	}
 
@@ -179,4 +182,5 @@ void g_update(array_t* a, int selection) {
 
 	SDL_RenderPresent(render);                                             //Actual rendering
 	SDL_Delay(delay);
+	return 0;
 }

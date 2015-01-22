@@ -3,6 +3,6 @@
 
 #include "array.h"
 
-void insertion(array_t* arr, void (*update)(array_t*,int));
+void insertion(array_t* arr, int (*update)(array_t*,int));
 
 #endif

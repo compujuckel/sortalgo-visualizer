@@ -3,6 +3,6 @@
 
 #include "array.h"
 
-void selectionsort(array_t* arr, void (*update)(array_t*,int));
+void selectionsort(array_t* arr, int (*update)(array_t*,int));
 
 #endif

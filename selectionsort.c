@@ -1,7 +1,7 @@
 #include "selectionsort.h"
 #include "array.h"
 
-void selectionsort(array_t* arr, void (*update)(array_t*,int))
+void selectionsort(array_t* arr, int (*update)(array_t*,int))
 {
   int i,j, temp;
   for(i=0;i<arr->length;i++){
@@ -10,7 +10,7 @@ void selectionsort(array_t* arr, void (*update)(array_t*,int))
                temp=arr->ptr[i];
               arr->ptr[i]=arr->ptr[j];
               arr->ptr[j]=temp;
-              update(arr, j);
+              if( update(arr, j)) return;
            }
       }
   }
