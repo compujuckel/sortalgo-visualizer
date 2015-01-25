@@ -12,7 +12,7 @@
 
 typedef struct algorithm {
 	char name[30];
-	void (*function)(array_t*, void (*)(array_t*,int));
+	void (*function)(array_t*, int (*)(array_t*,int));
 } algorithm_t;
 
 extern const algorithm_t AVAILABLE_ALGOS[];
