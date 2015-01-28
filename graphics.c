@@ -162,12 +162,12 @@ int g_update(array_t* a, int selection) {
 
 	int wsize_x, wsize_y;
 	SDL_GetWindowSize(window, &wsize_x, &wsize_y);
-	float elem_height = wsize_y / a->length;
+	float elem_height = (float)wsize_y / a->length;
 
 	float xPos = 0;                             //starting x-position for first box
 	float yPos = wsize_y;             //starting y position
 
-	float width = wsize_x / a->length;  //compute width of the boxes
+	float width = (float)wsize_x / a->length;  //compute width of the boxes
 
 	SDL_Rect r;
 	r.w = width - 1;                           //apply width to sdl-rectangle
