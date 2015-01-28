@@ -22,7 +22,7 @@ static int array_length = 100;
 void g_init(int wsize_x, int wsize_y) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	window = SDL_CreateWindow("Sortme", 100, 100, wsize_x, wsize_y, 0);             //creates a Window
+	window = SDL_CreateWindow("Sortme", 100, 100, wsize_x, wsize_y, SDL_WINDOW_RESIZABLE);             //creates a Window
 	render = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);            //creates Renderer
 
 	TTF_Init();
@@ -53,6 +53,18 @@ int g_getArrayLength(){
 
 void g_setArrayLength(int l){
 	array_length =l;
+}
+
+int g_getWindowX(void) {
+	int wsize_x;
+	SDL_GetWindowSize(window,&wsize_x,NULL);
+	return wsize_x;
+}
+
+int g_getWindowY(void) {
+	int wsize_y;
+	SDL_GetWindowSize(window,&wsize_y,NULL);
+	return wsize_y;
 }
 
 
@@ -87,7 +99,7 @@ static void g_print(int x, int y, char* text, TTF_Font *font, int fill)  {
 	SDL_Texture* t = SDL_CreateTextureFromSurface(render, f);
 
 	SDL_FreeSurface(f);
-  g_renderTexture(t, x, y, fill);
+	g_renderTexture(t, x, y, fill);
 	SDL_DestroyTexture(t);
 }
 
