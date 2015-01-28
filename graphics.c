@@ -67,6 +67,12 @@ int g_getWindowY(void) {
 	return wsize_y;
 }
 
+void g_toggleFullscreen(void) {
+	if(SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP)
+		SDL_SetWindowFullscreen(window, 0);
+	else if(!(SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN_DESKTOP))
+		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
 
 static void g_getTexSize(char* text, TTF_Font *font, int size[2]) {
 	SDL_Color white = {255, 255, 255};
@@ -155,6 +161,9 @@ int g_update(array_t* a, int selection) {
 		}
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) {
 			return 1;
+		}
+		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_F11) {
+			g_toggleFullscreen();
 		}
 	}
 

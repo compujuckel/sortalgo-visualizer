@@ -33,6 +33,9 @@ int main(){
 			if (e.type == SDL_QUIT) {
 				quit = 1;
 			}
+			if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_F11) {
+				g_toggleFullscreen();
+			}
 			if (e.type == SDL_MOUSEBUTTONDOWN) {
 				if (e.button.button == SDL_BUTTON_LEFT) {
 					//check delay buttons
