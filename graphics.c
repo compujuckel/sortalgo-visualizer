@@ -151,8 +151,7 @@ int g_update(array_t* a, int selection) {
 	SDL_Event e;
 	while (SDL_PollEvent(&e)) {
 		if(e.type == SDL_QUIT) {
-			g_cleanup();
-			exit(EXIT_SUCCESS);
+			return 1;
 		}
 		if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) {
 			return 1;

@@ -31,7 +31,6 @@ int main(){
 	while(!quit){
 		while (SDL_PollEvent(&e)) {
 			if (e.type == SDL_QUIT) {
-				g_cleanup();
 				quit = 1;
 			}
 			if (e.type == SDL_MOUSEBUTTONDOWN) {
