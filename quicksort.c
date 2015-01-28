@@ -2,7 +2,7 @@
 
 //partition function for quicksort
 static int partition(array_t* a,  int l, int r, int (*update)(array_t*,int)) {
-	if ( update(a, 0) ) return;
+	if ( update(a, 0) ) return -1;
 	int pivot, i, j, t;
 	pivot = a->ptr[l];
 	i = l; j = r+1;
