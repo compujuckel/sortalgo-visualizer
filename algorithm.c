@@ -4,11 +4,13 @@
 #include "quicksort.h"
 #include "insertionsort.h"
 #include "selectionsort.h"
+#include "shellsort.h"
 
 const algorithm_t AVAILABLE_ALGOS[] = {
 	{ "Bubble Sort", &bubblesort },
-	{ "Quicksort", &quicksort },
-	{ "Insertionsort", &insertion },
-  { "Selectionsort", &selectionsort },
+	{ "Quick Sort", &quicksort },
+	{ "Insertion Sort", &insertion },
+  { "Selection Sort", &selectionsort },
+  { "Shell Sort", &ShellSort },
 	{ "", NULL }
 };

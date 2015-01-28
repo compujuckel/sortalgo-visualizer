@@ -2,10 +2,6 @@
 #include "array.h"
 #include "graphics.h"
 
-#include <SDL2/SDL.h>
-
-SDL_Event e;
-
 void bubblesort(array_t* a, int (*update)(array_t*,int)) {
     int x;
     int y;

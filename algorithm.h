@@ -9,6 +9,7 @@
 #include "quicksort.h"
 #include "insertionsort.h"
 #include "selectionsort.h"
+#include "shellsort.h"
 
 typedef struct algorithm {
 	char name[30];
