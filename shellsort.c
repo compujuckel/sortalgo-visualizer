@@ -24,6 +24,7 @@ void ShellSort(array_t* array, int (*update)(array_t*,int))
                   }
              }
               array->ptr[j] = temp;
+              if(update(array, j)) return;
           }
       }
 }
